@@ -63,15 +63,18 @@ public class Player {
      * @fn makeMove()
      * @brief Set the player's move
      * @param board GameBoard
+     * @return boolean true in case of a made move, false otherwise
      */
-    public void makeMove(char[][] board, int row, int column) {
+    public boolean makeMove(char[][] board, int row, int column) {
         // Check if box is still available :
         if ( board[row][column] == 'X' || board[row][column] == 'O' ) {
-            System.out.println("**Box is already taken !**");
+            return false;
         }
 
         // Set player's move :
         board[row][column] = this.symbol;
+        
+        return true;
     }
 
 }
