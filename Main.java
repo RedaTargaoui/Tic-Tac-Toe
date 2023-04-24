@@ -6,67 +6,31 @@
  * @date 04/23/2023
  */
 
-import java.util.Scanner;
+import javax.swing.*;
+import java.awt.*;
 
 public class Main {
-
-    /**
-     * @fn getRowColumn()
-     * @brief Get the row and column that matches to the box number
-     * @param boxNumber Box number
-     * @return int[] array contains row and column values
-     */
-    public static int[] getRowColumn(int boxNumber) {
-        int row = -1;
-        int column = -1;
-
-        switch (boxNumber) {
-            case 1 -> {
-                row = 0;
-                column = 0;
-            }
-            case 2 -> {
-                row = 0;
-                column = 1;
-            }
-            case 3 -> {
-                row = 0;
-                column = 2;
-            }
-            case 4 -> {
-                row = 1;
-                column = 0;
-            }
-            case 5 -> {
-                row = 1;
-                column = 1;
-            }
-            case 6 -> {
-                row = 1;
-                column = 2;
-            }
-            case 7 -> {
-                row = 2;
-                column = 0;
-            }
-            case 8 -> {
-                row = 2;
-                column = 1;
-            }
-            case 9 -> {
-                row = 2;
-                column = 2;
-            }
-        }
-
-        return new int[]{row, column};
-    }
 
     /**
      * @fn main()
      * @brief Principal function
      */
     public static void main(String[] args) {
+        // Create the frame and set its properties :
+        JFrame frame = new JFrame("Tic Tac Toe");
+        frame.setSize(400, 400);
+        // Set window's position :
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        // Calculate the x and y position to center the frame on the screen :
+        int xPos = (screenSize.width - frame.getWidth()) / 2;
+        int yPos = (screenSize.height - frame.getHeight()) / 2;
+        // Set the location of the frame :
+        frame.setLocation(xPos, yPos);
+
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
+
+
         // Creating Game board :
         GameBoard gameBoard = new GameBoard();
 
@@ -74,54 +38,78 @@ public class Main {
         Player player1 = new Player("Player1", 'X');
         Player player2 = new Player("Player2", 'O');
 
-        int playerChoice;
-        int[] RowColumn; // To get row and column
+        // Create buttons and add them to a panel :
+        int rows = gameBoard.board.length;
+        int columns = gameBoard.board[0].length;
+        JPanel buttonPanel = new JPanel(new GridLayout(rows, columns));
+        JButton[][] buttons = new JButton[rows][columns];
+        // Initialize buttons and add them to the panel :
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                JButton button = new JButton("");// Create button
+                button.setFont(new Font("Arial", Font.BOLD, 50));
+                button.setBackground(Color.WHITE);
+                button.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                buttons[i][j] = button;
+                buttonPanel.add(button);
 
-        Scanner scanner = new Scanner(System.in);// To scan user's input
+                final int x = i;
+                final int y = j;
+                // Button click event :
+                button.addActionListener(e -> {
+                    // Get which player's turn is it and make the move :
+                    if ( gameBoard.getTurn() == player1.getSymbol() ) {
+                        if ( player1.makeMove(gameBoard.board, x, y) ) {
+                            buttons[x][y].setText(String.valueOf(player1.getSymbol()));
+                            gameBoard.switchTurn();
+                        }
+                    }
+                    if ( gameBoard.getTurn() == player2.getSymbol() ) {
+                        if ( player2.makeMove(gameBoard.board, x, y) ) {
+                            buttons[x][y].setText(String.valueOf(player2.getSymbol()));
+                            gameBoard.switchTurn();
+                        }
+                    }
+                });
+            }
+        }
 
-        gameBoard.DisplayBoard();// Display game board
+        // Add the button panel to the main frame :
+        frame.add(buttonPanel, BorderLayout.CENTER);
+
+
+        // To display the winner :
+        JLabel winnerLabel = new JLabel("test");
+        // Label's style :
+        winnerLabel.setFont(new Font("Arial", Font.ITALIC, 20));
+        // Adding label to panel :
+        JPanel labelPanel = new JPanel(new FlowLayout());
+        labelPanel.add(winnerLabel);
+        frame.add(labelPanel, BorderLayout.SOUTH);
+
+
+        // Show the frame :
+        frame.setVisible(true);
+
 
         // Game loop :
         while ( true ) {
 
-            // Get which player's turn is it
-            if ( gameBoard.getTurn() == 'X' ) {
-                System.out.println("\t*Your turn " + player1.getPlayerName() + "*");
-
-                System.out.print("->Write box number : ");
-                playerChoice = scanner.nextInt();
-
-                RowColumn = getRowColumn(playerChoice);
-                player1.makeMove(gameBoard.board, RowColumn[0], RowColumn[1]);//this!!
-            }
-            if ( gameBoard.getTurn() == 'O' ) {
-                System.out.println("\t*Your turn " + player2.getPlayerName() + "*");
-
-                System.out.print("->Write box number : ");
-                playerChoice = scanner.nextInt();
-
-                RowColumn = getRowColumn(playerChoice);
-                player2.makeMove(gameBoard.board, RowColumn[0], RowColumn[1]);
-            }
-
-            gameBoard.DisplayBoard();// Display game board
-
             // Check if a player won or not :
             if ( gameBoard.checkWin(player1.getSymbol()) ) {
-                System.out.println("\t*****PLAYER1 WIN*****");
+                winnerLabel.setText(player1.getPlayerName() + "(" + player1.getSymbol() + ") WINS");
                 break;
             }
             if ( gameBoard.checkWin(player2.getSymbol()) ) {
-                System.out.println("\t*****PLAYER2 WIN****");
+                winnerLabel.setText(player2.getPlayerName() + "(" + player2.getSymbol() + ") WINS");
                 break;
             }
             if ( gameBoard.fullBoard() ) {
-                System.out.println("\t*****GAME ENDED : NO WINNER*****");
+                winnerLabel.setText("GAME ENDED : NO WINNER");
                 break;
             }
 
-            // Switch turns between players :
-            gameBoard.switchTurn();
         }
+
     }
 }
