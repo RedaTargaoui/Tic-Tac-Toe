@@ -79,7 +79,7 @@ public class Main {
 
 
         // To display the winner :
-        JLabel winnerLabel = new JLabel("test");
+        JLabel winnerLabel = new JLabel("");
         // Label's style :
         winnerLabel.setFont(new Font("Arial", Font.ITALIC, 20));
         // Adding label to panel :
