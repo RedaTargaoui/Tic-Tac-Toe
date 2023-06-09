@@ -1,7 +1,7 @@
 # Java Projects
-![alt text](https://sawakinome.com/img/images/difference-between-java-and-core-java.png)
-
-## A simple Tic Tac Toe game program, done by me.
+## A simple Tic Tac Toe game program.
 
 ### Using :
  - Java Language.
+
+![alt text](https://sawakinome.com/img/images/difference-between-java-and-core-java.png)
